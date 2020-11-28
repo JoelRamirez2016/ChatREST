@@ -6,8 +6,8 @@ class Message(models.Model):
     user_writer_id = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     
     REQUIRED_FIELDS = ['content','user_writer_id']
-    def __str__(self):
-        return self.content
+    # def __str__(self):
+    #     return self.content
 
 
 
