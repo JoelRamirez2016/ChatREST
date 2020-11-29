@@ -10,13 +10,26 @@
     </head>
     <body>
         <div id="app" class="row no-gutters">
-            <div id="lastconections" class="col-md-3 lateralbar">
+            <div id="lastconections" class="col-md-3 lateralbar overflow-auto">
                 <div class="lateralhead">                                      
-                    <h3><span id="p-h-con">Conexiones</span> <a id="showCon"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
-                      </svg></a>
-                    </h3>
+                    <h3><span id="p-h-con">Conexiones</span><a href="{% url 'logout' %}" class="btn btn-danger">Salir</a></h3>
                 </div>
+                {% for user in users %}
+                    {% if request.user.id != user.id %}
+                        <div class="d-flex flex-column alert alert-success">                
+                    {% else %}
+                        <div class="d-flex flex-column alert alert-primary">                    
+                    {% endif %}                
+                        <span>Usuario: {{user.username}}</span>
+                        <span>Ultimo Acceso:                         
+                            {% if user.last_login %}
+                                {{user.last_login}}
+                            {% else %}
+                                No registrado
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endfor %}                                
             </div>
             <div id="chat" class="col-md-9">
                 <div id="msgcontent" class="p-3 overflow-auto">  
@@ -28,24 +41,30 @@
                                 <button id="delete_{{msg.id}}" type="submit" class="btn btn-danger deleteButton">Delete</button>
                         {% endif %}
                             <h4>{{msg.user_writer_id}}</h4>
-                            <img src="{{msg.content.url}}" class="w-50 h-50">    
+                            {% if msg.content_img %}
+                                <img src="{{msg.content_img.url}}" class="w-50 h-50">   
+                            {% endif %}
+                            <p>{{msg.content_txt}}</p>
                         </div>
                     {% endfor %}                                 
                 </div>
                 <form id="formMsgDta" method="POST" class="form-inline" action="../messages/" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <input id="user_writer_id" name="user_writer_id" type="hidden" value="{{ request.user.id }}">
-                    <div class="container">
-                        <div class="input-group">
+                    <div class="col-md-12 row">
+                        <div class="col-md-8">
+                            <input type="text" id="content_txt" name="content_txt" class="form-control w-100" placeholder="Escribe aqui tu mensaje" required>
+                        </div>
+                        <div class="col-md-3">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputImage" accept="image/x-png,image/gif,image/jpeg" name="content" aria-describedby="inputImage" required>
-                                <label class="custom-file-label" for="inputImage">Choose file</label>
-                            </div>
-                            <div class="input-group-append">
-                                <button class="btn btn-success">Enviar</button>
+                                <input type="file" class="custom-file-input" id="inputImage" accept="image/x-png,image/gif,image/jpeg" name="content_img" aria-describedby="inputImage" >
+                                <label class="custom-file-label" for="inputImage">Imagen</label>
                             </div>
                         </div>
-                    </div> 
+                        <div class="col-md-1">
+                            <button class="btn btn-success">Enviar</button>
+                        </div>
+                    </div>
                 </form>    
             </div>
         </div>
