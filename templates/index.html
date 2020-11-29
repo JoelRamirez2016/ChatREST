@@ -18,48 +18,36 @@
                     </h3>
                 </div>
             </div>
-            <div id="chat" class="col-md-5">
-                <div id="msgcontent" class="p-3 overflow-auto">              
+            <div id="chat" class="col-md-9">
+                <div id="msgcontent" class="p-3 overflow-auto">  
                     {% for msg in messages %}
                         {% if request.user.id != msg.user_writer_id.id %}
-                            <div class="chat-msg-other float-left" >
+                            <div id="msg_{{msg.id}}" class="chat-msg-other float-left" >
                         {% else %}
-                            <div class="chat-msg-my float-right" >
+                            <div id="msg_{{msg.id}}" class="chat-msg-my float-right" >
+                                <button id="delete_{{msg.id}}" type="submit" class="btn btn-danger deleteButton">Delete</button>
                         {% endif %}
-                            {{msg.content}}
+                            <h4>{{msg.user_writer_id}}</h4>
+                            <img src="{{msg.content.url}}" class="w-50 h-50">    
                         </div>
                     {% endfor %}                                 
                 </div>
-                <form method="POST" action="../messages/" >
+                <form id="formMsgDta" method="POST" class="form-inline" action="../messages/" enctype="multipart/form-data" >
                     {% csrf_token %}
-                    <input id="content" name="content" type="text" class="form-control" placeholder="enviar imagen">
                     <input id="user_writer_id" name="user_writer_id" type="hidden" value="{{ request.user.id }}">
-                    <input type="submit" value="Enviar">
+                    <div class="container">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputImage" accept="image/x-png,image/gif,image/jpeg" name="content" aria-describedby="inputImage" required>
+                                <label class="custom-file-label" for="inputImage">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-success">Enviar</button>
+                            </div>
+                        </div>
+                    </div> 
                 </form>    
             </div>
-            <div id="profile" class="col-md-4 lateralbar">
-                
-                <div class="lateralhead">                                      
-                    <h3><a id="showprf"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left" fill="currentColor" >
-                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-                        </svg></a><span id="p-h-prf">Perfil</span> 
-                    </h3>
-                </div>
-                <div class="user-foto">
-                    <img src="img/user.jpg" class="user-ft">    
-                </div>
-                <form id="datos-personales" action="">
-                    <div class="form-group">
-                        <label for="name">Tu nombre</label>
-                        <input id="name" type="text" class="form-control" value="Alexandra">
-                    </div>                   
-                    <div class="form-group">
-                        <label for="aboutme">Sobre mi</label>
-                        <textarea class="form-control" id="aboutme" rows="3"></textarea>
-                    </div>                    
-                </form>
-            </div>
-
         </div>
         
         <!-- Optional JavaScript -->
@@ -68,11 +56,32 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <style>
+            #customFile .custom-file-input:lang(en)::after {
+            content: "Select file...";
+            }
+
+            #customFile .custom-file-input:lang(en)::before {
+            content: "Click me";
+            }
+
+            /*when a value is selected, this class removes the content */
+            .custom-file-input.selected:lang(en)::after {
+            content: "" !important;
+            }
+
+            .custom-file {
+            overflow: hidden;
+            }
+            .custom-file-input {
+            white-space: nowrap;
+            }
             .user-foto{
                 margin: 10% 0 10% 0;
                 text-align: center;
             }
-            
+            .msg_img{
+                width: 60%;
+            }
             .lateralhead{
                 background: green;
                 padding: 5% 5% 5% 15%;
@@ -137,6 +146,48 @@
         </style>
         <script>
             $(function() {
+
+                document.querySelector('.custom-file-input').addEventListener('change',function(e){
+                    var fileName = document.getElementById("inputImage").files[0].name;
+                    var nextSibling = e.target.nextElementSibling
+                    nextSibling.innerText = fileName
+                })
+
+                $('#formMsgDta').submit(function(e){
+                    e.preventDefault();    
+                    var formData = new FormData(this);
+
+                    $.ajax({
+                        headers : {
+                            'X-CSRFToken' : '{{ csrf_token }}'
+                        },
+                        url: '../messages/',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            console.log(data)
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                })
+
+                $('.deleteButton').click(function(){
+                    idmsg = $(this).attr('id').substr($(this).attr('id').indexOf("_") + 1);
+                    $.ajax({
+                        headers : {
+                            'X-CSRFToken' : '{{ csrf_token }}'
+                        },
+                        url: '../messages/' + idmsg + '/',
+                        type: 'DELETE',
+                        success: function(result) {
+                            $('#msg_' + idmsg).remove()
+                        }
+                    });
+                })
+                
+
                 var clkconetions = 0;
                 var clkprofile = 0;
 
