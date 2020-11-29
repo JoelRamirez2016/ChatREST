@@ -10,11 +10,11 @@ class Message(models.Model):
     # def __str__(self):
     #     return self.content
 
-class LoginRegister(models.Model):
+class LoginsLog(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    date = models.models.DecimalField()
+    date = models.DateTimeField()
 
     REQUIRED_FIELDS = ['user_id']
-    # constraints = [
-    #     models.UniqueConstraint(fields=['user_id'], name='unique_user')
-    # ]
+    constraints = [
+        models.UniqueConstraint(fields=['user_id'], name='unique_user')
+    ]

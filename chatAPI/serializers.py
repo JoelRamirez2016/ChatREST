@@ -12,3 +12,8 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'content','user_writer_id']
+
+class LoginsLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'user_id','date']

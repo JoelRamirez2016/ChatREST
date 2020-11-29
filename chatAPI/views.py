@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
-from chatAPI.serializers import UserSerializer, MessageSerializer
-from chatAPI.models import Message
+from chatAPI.serializers import UserSerializer, MessageSerializer, LoginsLogSerializer
+from chatAPI.models import Message, LoginsLog
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
@@ -31,6 +31,16 @@ class MessageViewSet(viewsets.ModelViewSet):
     search_fields = ['content']
     permission_classes = [permissions.IsAuthenticated]
     
+class LoginsLogViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = LoginsLog.objects.all().order_by('id')
+    serializer_class = LoginsLogSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['user_id','date']
+    permission_classes = [permissions.IsAuthenticated]
+
     # def post(self, request):
     #     serializer = self.serializer_class(data=request.data)
     #     if serializer.is_valid():
