@@ -11,6 +11,7 @@ from rest_framework import filters
 from .forms import CreateUserForm
 
 def chat_index(request):
+    """ metodo para renderizar la vista del chat """
     messages = Message.objects.all()
     users = User.objects.all()
     return render(request, template_name='index.html', context={
@@ -19,6 +20,7 @@ def chat_index(request):
         })
 
 def register_user(request):
+    """ metodo para la creacion de usuarios """
     form = CreateUserForm()
 
     if request.method == 'POST':
@@ -31,6 +33,7 @@ def register_user(request):
         })
 
 def login_user(request):
+    """ metodo para el logout de usuarios: el login del viewSet se mantiene """
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -46,13 +49,13 @@ def login_user(request):
         })
         
 def logout_user(request):
+    """ metodo para el logout de usuarios: el logout del viewSet se mantiene """
     logout(request)
     return redirect('login')
 
-
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint para el control de usuarios mediante urls
     """
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
@@ -60,23 +63,15 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint para el control de mensajes mediante urls
     """
     queryset = Message.objects.all().order_by('id')
     serializer_class = MessageSerializer
     filter_backends = [DjangoFilterBackend,filters.SearchFilter]
-    filterset_fields = ['user_writer_id']
+    # filter_fields = {
+    #     'id': ['gte', 'lte']
+    # }
+    filterset_fields = ['user_writer_id','id']
     search_fields = ['content_txt']
     permission_classes = [permissions.IsAuthenticated]
     
-
-    # def post(self, request):
-    #     serializer = self.serializer_class(data=request.data)
-    #     if serializer.is_valid():
-    #         content = serializer.validated_data.get('content')
-    #         return Response({'msg' : 'guardando'})
-    #     else:
-    #         return Respone(
-    #             serializer.errors,
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )

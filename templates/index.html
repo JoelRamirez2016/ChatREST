@@ -6,10 +6,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="/static/css/styles.css">
         <title>ChatRoom</title>
     </head>
     <body>
         <div id="app" class="row no-gutters">
+            <input type="hidden" id="actual_user" value="{{request.user.id}}">
             <div id="lastconections" class="col-md-3 lateralbar overflow-auto">
                 <div class="lateralhead">                                      
                     <h3><span id="p-h-con">Conexiones</span><a href="{% url 'logout' %}" class="btn btn-danger">Salir</a></h3>
@@ -32,22 +34,31 @@
                 {% endfor %}                                
             </div>
             <div id="chat" class="col-md-9">
-                <div id="msgcontent" class="p-3 overflow-auto">  
-                    {% for msg in messages %}
-                        {% if request.user.id != msg.user_writer_id.id %}
-                            <div id="msg_{{msg.id}}" class="chat-msg-other float-left" >
-                        {% else %}
-                            <div id="msg_{{msg.id}}" class="chat-msg-my float-right" >
-                                <button id="delete_{{msg.id}}" type="submit" class="btn btn-danger deleteButton">Delete</button>
-                        {% endif %}
-                            <h4>{{msg.user_writer_id}}</h4>
-                            {% if msg.content_img %}
-                                <img src="{{msg.content_img.url}}" class="w-50 h-50">   
+                <div id="chatmsg_refresh">
+                    <div id="msgcontent" class="p-3 overflow-auto">  
+                        {% for msg in messages %}
+                            {% if request.user.id != msg.user_writer_id.id %}
+                                <div id="msg_{{msg.id}}" class="chat-msg-other float-left" >
+                            {% else %}
+                                <div id="msg_{{msg.id}}" class="chat-msg-my float-right" >
+                                    <button id="delete_{{msg.id}}" type="submit" class="btn btn-danger deleteButton">X</button>
                             {% endif %}
-                            <p>{{msg.content_txt}}</p>
-                        </div>
-                    {% endfor %}                                 
+                                <h4>{{msg.user_writer_id}}</h4>
+                                {% if msg.content_img %}
+                                    <img src="{{msg.content_img.url}}" class="w-50 h-50">   
+                                {% endif %}
+                                <p>{{msg.content_txt}}</p>
+                            </div>
+                        {% endfor %}  
+                        <div id="msg_nn" style="display:none">
+                            <button id="delete_nn" type="submit" class="btn btn-danger deleteButton">X</button>
+                            <h4></h4>    
+                            <img src="" class="w-50 h-50" style="display:none">   
+                            <p></p>
+                        </div>                           
+                    </div>
                 </div>
+                
                 <form id="formMsgDta" method="POST" class="form-inline" action="../messages/" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <input id="user_writer_id" name="user_writer_id" type="hidden" value="{{ request.user.id }}">
@@ -74,182 +85,7 @@
         <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>        
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <style>
-            #customFile .custom-file-input:lang(en)::after {
-            content: "Select file...";
-            }
-
-            #customFile .custom-file-input:lang(en)::before {
-            content: "Click me";
-            }
-
-            /*when a value is selected, this class removes the content */
-            .custom-file-input.selected:lang(en)::after {
-            content: "" !important;
-            }
-
-            .custom-file {
-            overflow: hidden;
-            }
-            .custom-file-input {
-            white-space: nowrap;
-            }
-            .user-foto{
-                margin: 10% 0 10% 0;
-                text-align: center;
-            }
-            .msg_img{
-                width: 60%;
-            }
-            .lateralhead{
-                background: green;
-                padding: 5% 5% 5% 15%;
-                color: white;
-            }
-            #app{
-                background: green;    
-                width:100%; 
-                height:100%; 
-            }
-            .lateralbar{
-                background-color: white;
-                height: 100vh;
-            }
-            #msgcontent{
-                background: gainsboro;
-                height: 94vh;
-            }
-            .user-ft{
-                width: 60%;
-                border-radius: 50%;
-            }
-            .chat-msg-other{
-                background-color: aqua;                
-                padding: 3%;
-                width: 58%;
-                border-top-left-radius: 0px;
-                border-top-right-radius: 30px;
-                border-bottom-right-radius: 30px;
-                border-bottom-left-radius: 30px; 
-                margin-bottom: 5px;           
-            }
-            .chat-msg-my{
-                background-color: white;     
-                padding: 3%;
-                width: 58%;
-                border-top-left-radius: 30px;
-                border-top-right-radius: 0px;
-                border-bottom-right-radius: 30px;
-                border-bottom-left-radius: 30px;   
-                margin-bottom: 5px;                    
-            }
-            /* width */
-            ::-webkit-scrollbar {
-                width: 10px;
-            }
-
-            /* Track */
-            ::-webkit-scrollbar-track {
-                background: #f1f1f1; 
-            }
-            
-            /* Handle */
-            ::-webkit-scrollbar-thumb {
-                background: #888; 
-            }
-
-            /* Handle on hover */
-            ::-webkit-scrollbar-thumb:hover {
-                background: #555; 
-            }
-        </style>
-        <script>
-            $(function() {
-
-                document.querySelector('.custom-file-input').addEventListener('change',function(e){
-                    var fileName = document.getElementById("inputImage").files[0].name;
-                    var nextSibling = e.target.nextElementSibling
-                    nextSibling.innerText = fileName
-                })
-
-                $('#formMsgDta').submit(function(e){
-                    e.preventDefault();    
-                    var formData = new FormData(this);
-
-                    $.ajax({
-                        headers : {
-                            'X-CSRFToken' : '{{ csrf_token }}'
-                        },
-                        url: '../messages/',
-                        type: 'POST',
-                        data: formData,
-                        success: function (data) {
-                            console.log(data)
-                        },
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    });
-                })
-
-                $('.deleteButton').click(function(){
-                    idmsg = $(this).attr('id').substr($(this).attr('id').indexOf("_") + 1);
-                    $.ajax({
-                        headers : {
-                            'X-CSRFToken' : '{{ csrf_token }}'
-                        },
-                        url: '../messages/' + idmsg + '/',
-                        type: 'DELETE',
-                        success: function(result) {
-                            $('#msg_' + idmsg).remove()
-                        }
-                    });
-                })
-                
-
-                var clkconetions = 0;
-                var clkprofile = 0;
-
-                
-                /*$("#showCon").on("click", function(){
-                    if( clkconetions % 2 == 0){
-                        $('#lastconections').removeClass('col-md-3');    
-                        $('#lastconections').addClass('col-md-1');                          
-                        $('#chat').removeClass('col-md-5');
-                        if(clkprofile % 2 != 0) $('#chat').addClass('col-md-10');
-                        else $('#chat').addClass('col-md-7');
-                    }else{
-                        $('#lastconections').removeClass('col-md-1');    
-                        $('#lastconections').addClass('col-md-3');  
-                        $('#chat').removeClass('col-md-7');
-                        $('#chat').removeClass('col-md-10');
-                        $('#chat').addClass('col-md-5');                                                        
-                    }
-                    clkconetions++;
-                    console.log(clkconetions, clkprofile);
-                });
-
-                $("#showprf").on("click", function(){
-                    if( clkprofile % 2 == 0 ){
-                        $('#profile').removeClass('col-md-4');    
-                        $('#profile').addClass('col-md-1');                          
-                        $('#datos-personales, #p-h-text').hide()   
-                        $('#chat').removeClass('col-md-5');
-                        if(clkconetions % 2 != 0) $('#chat').addClass('col-md-10');
-                        else $('#chat').addClass('col-md-8');
-                    }else{
-                        $('#profile').removeClass('col-md-1');    
-                        $('#profile').addClass('col-md-4');  
-                        $('#datos-personales, #p-h-text').show() 
-                        $('#chat').removeClass('col-md-8');
-                        $('#chat').removeClass('col-md-10');
-                        $('#chat').addClass('col-md-5');
-                    }
-                    clkprofile++;
-                    console.log(clkconetions, clkprofile);
-                });*/            
-            });
-        </script>
+        <script src="/static/scripts/index.js"></script>
     </body>
 </html>
 

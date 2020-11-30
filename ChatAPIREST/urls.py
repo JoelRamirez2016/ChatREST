@@ -16,6 +16,5 @@ urlpatterns = [
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     path('register/', views.register_user, name='register'),
-    # re_path(r'^media/(?P<path>.*$)','django.views.static.serve', {'document_root':settings.MEDIA_URL}),
     re_path(r'^chat/',views.chat_index, name='chat_view')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
