@@ -28,3 +28,7 @@ Este se instala con el siguiente comando virtualenv env
 - 2: Posterior a activar el entorno virtual instalar los requerimientos para el proyecto “pip install -r requirements.txt”
 
 # Paso 3: Una vez configurado el entorno virtual e instalados todos los requierements, procedemos a ejecutar el proyecto. “Python manage.py runserver”
+Una vez inicializada la aplicacion, se podra hacer uso del registro para añadir usuarios, sin embargo, algunos de los usuarios utilizados y con mensajes visibles son los siguientes:
+- admin: jowelalex0
+- administrador: jowelalex0
+- pepe : jowelalex0
