@@ -62,9 +62,9 @@ $(document).ready(function() {
         });
     })
     /**
-     * actializacion visual del borrado de mensajes rpopios
+     * actializacion visual del borrado de mensajes propios
      */
-    $('.deleteButton').click(function(){
+    $('body').on('click', '.deleteButton', function() {
         idmsg = $(this).attr('id').substr($(this).attr('id').indexOf("_") + 1);
         $.ajax({
             headers : {
@@ -76,7 +76,20 @@ $(document).ready(function() {
                 $('#msg_' + idmsg).remove()
             }
         });
-    })  
+    });
+    // $('.deleteButton').click(function(){
+    //     idmsg = $(this).attr('id').substr($(this).attr('id').indexOf("_") + 1);
+    //     $.ajax({
+    //         headers : {
+    //             'X-CSRFToken' : $('input[name ="csrfmiddlewaretoken"]').val()
+    //         },
+    //         url: '../messages/' + idmsg + '/',
+    //         type: 'DELETE',
+    //         success: function(result) {
+    //             $('#msg_' + idmsg).remove()
+    //         }
+    //     });
+    // })  
 
     
     /* Imposible de usar
