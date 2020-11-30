@@ -13,7 +13,7 @@ from .forms import CreateUserForm
 def chat_index(request):
     """ metodo para renderizar la vista del chat """
     messages = Message.objects.all()
-    users = User.objects.all()
+    users = User.objects.all().order_by('-last_login').exclude(last_login = None)
     return render(request, template_name='index.html', context={
         'messages': messages,
         'users': users
