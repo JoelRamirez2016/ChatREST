@@ -1,9 +1,9 @@
 # DESARROLLADO POR JOEL ALEXANDER RAMIREZ NUÑEZ
 # Se realiza el proyecto cumpliendo con los siguientes requerimientos satisfactoriamente:
-## 1: Modulo para Registro de Usuarios: 127.0.0.1:8000/register 
-## 2: Login o inicio de Sesión para Usuarios 127.0.0.1:8000/login
-## 3: Sala de chat publica 127.0.0.1:8000/chat
-## 4: Eliminación de mensajes por parte de los usuarios  127.0.0.1:8000/chat
+- 1: Modulo para Registro de Usuarios: 127.0.0.1:8000/register 
+- 2: Login o inicio de Sesión para Usuarios 127.0.0.1:8000/login
+- 3: Sala de chat publica 127.0.0.1:8000/chat
+- 4: Eliminación de mensajes por parte de los usuarios  127.0.0.1:8000/chat
 
 
 # BACKEND
