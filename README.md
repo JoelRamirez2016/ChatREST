@@ -1,5 +1,5 @@
 # DESARROLLADO POR: 
-*** JOEL ALEXANDER RAMIREZ NUÑEZ ***
+**JOEL ALEXANDER RAMIREZ NUÑEZ**
 # Se realiza el proyecto cumpliendo con los siguientes requerimientos satisfactoriamente:
 - 1: Modulo para Registro de Usuarios: 127.0.0.1:8000/register 
 - 2: Login o inicio de Sesión para Usuarios 127.0.0.1:8000/login
